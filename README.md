@@ -26,7 +26,7 @@ IG_USER_ID=...
 ## Kullanım
 
 1. Görselleri commit edip `main`'e push edin. Instagram görseli
-   `raw.githubusercontent.com` linkinden çeker; betik URL'nin 200 ve `image/jpeg`
+   `raw.githubusercontent.com` linkinden çeker. Betik `main` yerine güncel commit SHA'sını kullanır (önbellek eski görseli vermesin); URL'nin 200 ve `image/jpeg`
    döndüğünü kontrol eder.
 2. Kuru deneme (varsayılan, hiçbir şey paylaşmaz):
 

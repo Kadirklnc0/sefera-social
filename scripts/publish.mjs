@@ -6,9 +6,11 @@
 import { readFileSync, writeFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { resolve, relative, join, dirname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
 
 const GRAPH = 'https://graph.facebook.com/v26.0';
-const RAW_BASE = 'https://raw.githubusercontent.com/Kadirklnc0/sefera-social/main/';
+const RAW_REPO = 'https://raw.githubusercontent.com/Kadirklnc0/sefera-social/';
+let RAW_BASE = ''; // main yerine commit SHA: önbellek eski görseli vermesin
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SIZES = { feed: [1080, 1350], carousel: [1080, 1350], story: [1080, 1920] };
 const POLL_MS = 3000;
@@ -105,13 +107,14 @@ function loadPost(dirArg) {
 
   const [w, h] = SIZES[type];
   const images = files.map((f) => {
-    const size = jpegSize(readFileSync(join(dir, f)));
+    const bytes = readFileSync(join(dir, f));
+    const size = jpegSize(bytes);
     if (!size) fail(`${f} geçerli bir JPEG değil.`);
     if (size.width !== w || size.height !== h) {
       fail(`${f} boyutu ${size.width}x${size.height}; ${type} için ${w}x${h} olmalı.`);
     }
     const url = RAW_BASE + `${rel}/${f}`.split('/').map(encodeURIComponent).join('/');
-    return { file: f, url };
+    return { file: f, url, bytes: bytes.length };
   });
 
   let caption = '';
@@ -149,7 +152,15 @@ async function api(method, path, params = {}) {
   return data;
 }
 
-async function checkImageUrl({ file, url }) {
+function commitSha() {
+  try {
+    return execFileSync('git', ['rev-parse', 'HEAD'], { cwd: REPO_ROOT, encoding: 'utf8' }).trim();
+  } catch {
+    return fail('Git commit SHA\'sı okunamadı. Betik, klonlanmış repo içinde çalışmalı.');
+  }
+}
+
+async function checkImageUrl({ file, url, bytes }) {
   let res;
   try { res = await fetch(url, { method: 'HEAD' }); }
   catch { return `${file}: URL'ye ulaşılamadı.`; }
@@ -158,6 +169,10 @@ async function checkImageUrl({ file, url }) {
   }
   const ct = (res.headers.get('content-type') || '').toLowerCase();
   if (!ct.startsWith('image/jpeg')) return `${file}: içerik türü "${ct || 'yok'}", image/jpeg olmalı.`;
+  const len = Number(res.headers.get('content-length'));
+  if (len && len !== bytes) {
+    return `${file}: GitHub'daki dosya (${len} bayt) yerel dosyadan (${bytes} bayt) farklı. Değişiklik commit edilip push edilmemiş.`;
+  }
   return null;
 }
 
@@ -187,6 +202,9 @@ async function main() {
   const uid = env.IG_USER_ID;
   const dry = !args.paylas;
 
+  const sha = commitSha();
+  RAW_BASE = `${RAW_REPO}${sha}/`;
+  say(`Görsel sürümü: commit ${sha.slice(0, 7)}`);
   const post = loadPost(args.dir);
   say(`Mod: ${dry ? 'KURU DENEME (paylaşım yapılmayacak)' : 'GERÇEK PAYLAŞIM'}`);
   say(`Tür: ${post.type}, görsel sayısı: ${post.images.length}`);
