@@ -1,0 +1,7 @@
+Sefera'da odalama tek ekranda yapılır: yolcuları sürükleyip odalara yerleştirirsiniz.
+
+Kontroller yerleştirme anında çalışır. Yetişkin yolcular aynı cinsiyetle eşleşir, dolu odaya yerleştirme yapılmaz, oda numaralarını sistem verir. Oda tipi değiştiğinde kişi başı fiyat farkı görünür; fiyatı güncellemek ya da korumak sizin kararınız. Otele iletilecek oda listesi ve otobüs listesi Odalama sekmesinden alınır.
+
+Odalamayı kendi programınızla görmek için 14 gün ücretsiz deneyin. Demo talebi için profildeki bağlantıyı kullanabilirsiniz.
+
+#umre #hac #umreturu #hacumre #seyahatacentesi #acenteyazılımı
