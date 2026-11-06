@@ -1,0 +1,7 @@
+Yolcu verisi şifreli saklanır. Kim neyi görebileceği yetkiyle belirlenir.
+
+Yetki değişiklikleri kayda geçer, kim neyi ne zaman değiştirdiği görülür. İade, iptal ve silme gibi kritik işlemler onaydan geçer.
+
+14 gün ücretsiz deneyin, kurulum genellikle aynı gün. Demo talebi için profildeki bağlantıyı kullanabilirsiniz.
+
+#sefera #seferayazilim #seferapanel #umre #hac #umreturu #hacumre #umreacentesi #seyahatacentesi #acenteyazılımı
